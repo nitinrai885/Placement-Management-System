@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h3 class="mb-4">Applicants for {{ job.title }}</h3>
+
+{% for app in applications %}
+
+<div class="card mb-3 p-3 shadow-sm">
+
+    <h5>{{ app.student.username }}</h5>
+
+    <p><strong>Phone:</strong> {{ app.student.studentprofile.phone }}</p>
+    <p><strong>Branch:</strong> {{ app.student.studentprofile.branch }}</p>
+    <p><strong>Skills:</strong> {{ app.student.studentprofile.skills }}</p>
+
+    <p>
+        <strong>Status:</strong>
+        {% if app.status == 'selected' %}
+            <span class="badge bg-success">Selected</span>
+        {% elif app.status == 'rejected' %}
+            <span class="badge bg-danger">Rejected</span>
+        {% else %}
+            <span class="badge bg-secondary">Pending</span>
+        {% endif %}
+    </p>
+
+    {% if app.status == 'pending' %}
+
+    <form method="POST" action="{% url 'update_status' app.id 'selected' %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success btn-sm">
+            Select
+        </button>
+    </form>
+
+    <form method="POST" action="{% url 'update_status' app.id 'rejected' %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger btn-sm">
+            Reject
+        </button>
+    </form>
+
+    {% endif %}
+
+</div>
+
+{% empty %}
+<p>No applicants yet.</p>
+{% endfor %}
+
+{% endblock %}
