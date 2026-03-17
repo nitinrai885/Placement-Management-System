@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h3 class="mb-4">Available Jobs</h3>
+
+{% for job in jobs %}
+<div class="card mb-3 shadow-sm p-3">
+
+    <h5>{{ job.title }}</h5>
+    <p>{{ job.description }}</p>
+    <p><strong>Salary:</strong> ₹{{ job.salary }}</p>
+    <p><strong>Location:</strong> {{ job.location }}</p>
+
+    {% if job.id in applied_jobs %}
+        <button class="btn btn-outline-secondary btn-sm" disabled>
+            ✔ Already Applied
+        </button>
+    {% else %}
+        <a href="{% url 'apply_job' job.id %}" class="btn btn-primary btn-sm">
+            Apply
+        </a>
+    {% endif %}
+
+</div>
+{% empty %}
+<p>No jobs available.</p>
+{% endfor %}
+
+{% endblock %}

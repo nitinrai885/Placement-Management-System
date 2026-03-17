@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h3 class="mb-4">Applicants for {{ job.title }}</h3>
+
+{% for app in applications %}
+
+<div class="card mb-3 shadow-sm border-0">
+    <div class="card-body">
+
+        <!-- Top Section: Name + Status -->
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-2">{{ app.student.username }}</h5>
+
+            {% if app.status == 'selected' %}
+                <span class="badge bg-success">Selected</span>
+            {% elif app.status == 'rejected' %}
+                <span class="badge bg-danger">Rejected</span>
+            {% else %}
+                <span class="badge bg-secondary">Pending</span>
+            {% endif %}
+        </div>
+
+        <hr>
+
+        <!-- Student Details -->
+        <p><strong>📞 Phone:</strong> {{ app.student.studentprofile.phone }}</p>
+        <p><strong>🎓 Branch:</strong> {{ app.student.studentprofile.branch }}</p>
+        <p><strong>💻 Skills:</strong> {{ app.student.studentprofile.skills }}</p>
+
+        <!-- Resume Section -->
+        <p>
+        <strong>📄 Resume:</strong>
+        {% if app.student.studentprofile.resume %}
+            <a href="{{ app.student.studentprofile.resume.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                View
+            </a>
+            <a href="{{ app.student.studentprofile.resume.url }}" download class="btn btn-sm btn-outline-success">
+                Download
+            </a>
+        {% else %}
+            <span class="text-muted">No resume uploaded</span>
+        {% endif %}
+        </p>
+
+        <!-- Action Buttons -->
+        {% if app.status == 'pending' %}
+        <div class="mt-2">
+
+            <form method="POST" action="{% url 'update_status' app.id 'selected' %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success btn-sm">
+                    Select
+                </button>
+            </form>
+
+            <form method="POST" action="{% url 'update_status' app.id 'rejected' %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm">
+                    Reject
+                </button>
+            </form>
+
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+{% empty %}
+<p>No applicants yet.</p>
+{% endfor %}
+
+{% endblock %}
